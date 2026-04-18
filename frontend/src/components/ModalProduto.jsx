@@ -2,14 +2,14 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import FormProduto from "./FormProduto";
-import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import FormProduto from "./FormProduto";
+import { Button } from "./ui/button";
 
 const CAMPO_VAZIO = {
   nome: "",
@@ -24,16 +24,9 @@ export default function ModalProduto({
   modoEdicao,
   onSalvar,
 }) {
-  const [valores, setValores] = useState(CAMPO_VAZIO);
+  const [valores, setValores] = useState(modoEdicao ?? CAMPO_VAZIO);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
-
-  useEffect(() => {
-    if (aberto) {
-      setValores(modoEdicao ?? CAMPO_VAZIO);
-      setErro("");
-    }
-  }, [aberto, modoEdicao]);
 
   const handleChange = (campo, valor) => {
     setValores((v) => ({ ...v, [campo]: valor }));
@@ -68,13 +61,17 @@ export default function ModalProduto({
 
   if (!aberto) return null;
   return (
-    <Dialog open={aberto} onOpenChange={(v) => !v && onFechar}>
+    <Dialog open={aberto} onOpenChange={onFechar}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {modoEdicao ? "Editar produto" : "Novo produto"}
           </DialogTitle>
-          <DialogDescription>Gerenciar estoque</DialogDescription>
+          {modoEdicao ? (
+            <DialogDescription>{modoEdicao.nome}</DialogDescription>
+          ) : (
+            ""
+          )}
         </DialogHeader>
         <FormProduto valores={valores} onChange={handleChange} erro={erro} />
         <DialogFooter>

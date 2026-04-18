@@ -84,7 +84,14 @@ export default function Produtos() {
           />
         </div>
         <div>
-          <Button>+ Novo Produto</Button>
+          <Button
+            onClick={() => {
+              setModoEdicao(null);
+              setAberto(true);
+            }}
+          >
+            + Novo Produto
+          </Button>
         </div>
       </div>
       {/* Tabela de produtos */}
@@ -204,6 +211,7 @@ export default function Produtos() {
 
       {/* Modal */}
       <ModalProduto
+        key={modoEdicao?.id ?? "novo"}
         aberto={aberto}
         onFechar={() => setAberto(false)}
         modoEdicao={modoEdicao}
