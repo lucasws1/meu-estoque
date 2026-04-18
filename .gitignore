@@ -5,8 +5,12 @@ backend/node_modules/
 
 # env
 .env
-frontend/.env
+.env*
 backend/.env
+frontend/.env
+frontend/.env.production
+frontend/.env.development
+
 
 # build
 frontend/dist/
