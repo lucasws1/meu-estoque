@@ -7,3 +7,5 @@ router.get("/:id", ctrl.buscarProduto);
 router.post("/", ctrl.criarProduto);
 router.put("/:id", ctrl.atualizarProduto);
 router.delete("/:id", ctrl.deletarProduto);
+
+module.exports = router;
