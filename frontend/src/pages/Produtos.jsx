@@ -99,6 +99,7 @@ export default function Produtos() {
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>
+              <th className="px-4 py-3 text-left font-medium">ID</th>
               <th className="px-4 py-3 text-left font-medium">Nome</th>
               <th className="px-4 py-3 text-left font-medium">Estoque</th>
               <th className="px-4 py-3 text-left font-medium">Preço Custo</th>
@@ -150,6 +151,10 @@ export default function Produtos() {
                   key={p.id}
                   className="border-t border-border hover:bg-muted/30 transition-colors"
                 >
+                  <td className="px-4 py-3 font-medium">
+                    <Link to={`/produtos/${p.id}`}>{p.id}</Link>
+                  </td>
+
                   <td className="px-4 py-3 font-medium">
                     <Link to={`/produtos/${p.id}`}>{p.nome}</Link>
                   </td>

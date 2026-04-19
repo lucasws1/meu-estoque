@@ -5,7 +5,7 @@ const TIPOS_VALIDOS = ["entrada", "saida"];
 // GET /api/
 exports.listarMovimentacoes = async (req, res, next) => {
   try {
-    const { tipo, nome_produto } = req.query;
+    const { tipo, nome_produto, produto_id, data_from, data_to } = req.query;
 
     if (tipo && !TIPOS_VALIDOS.includes(tipo)) {
       return res
@@ -28,6 +28,21 @@ exports.listarMovimentacoes = async (req, res, next) => {
     if (nome_produto) {
       sql += " AND p.nome LIKE ?";
       params.push(`%${nome_produto}%`);
+    }
+
+    if (produto_id) {
+      sql += " AND m.produto_id = ?";
+      params.push(produto_id);
+    }
+
+    if (data_from) {
+      sql += " AND m.data_movimentacao >= ?";
+      params.push(new Date(data_from));
+    }
+
+    if (data_to) {
+      sql += " AND m.data_movimentacao <= ?";
+      params.push(new Date(data_to));
     }
 
     sql += " ORDER BY m.data_movimentacao DESC";
@@ -62,7 +77,14 @@ exports.buscarMovimentacao = async (req, res, next) => {
 // POST /api/movimentacoes
 exports.criarMovimentacao = async (req, res, next) => {
   try {
-    const { produto_id, tipo, quantidade, preco_unitario } = req.body;
+    const {
+      produto_id,
+      tipo,
+      quantidade,
+      preco_unitario,
+      data_movimentacao,
+      observacao,
+    } = req.body;
 
     if (!produto_id)
       return res
@@ -86,20 +108,46 @@ exports.criarMovimentacao = async (req, res, next) => {
         .status(400)
         .json({ error: 'Campo "preco_unitario" é obrigatório' });
 
-    const [result] = await pool.query(
-      `INSERT INTO movimentacoes (produto_id, tipo, quantidade, preco_unitario) VALUES (?, ?, ?, ?, ?)`,
-      [produto_id, tipo, quantidade, preco_unitario],
-    );
+    const delta = tipo === "entrada" ? quantidade : -quantidade;
 
-    const [rows] = await pool.query(
-      `SELECT m.*, p.nome AS nome_produto
-       FROM movimentacoes m
-       JOIN produtos p ON m.produto_id = p.id
-       WHERE m.id = ?`,
-      [result.insertId],
-    );
+    const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
 
-    res.status(201).json(rows[0]);
+      const [result] = await conn.query(
+        `INSERT INTO movimentacoes (produto_id, tipo, quantidade, preco_unitario, data_movimentacao, observacao) VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+          produto_id,
+          tipo,
+          quantidade,
+          preco_unitario,
+          data_movimentacao || new Date(),
+          observacao || "",
+        ],
+      );
+
+      await conn.query(
+        `UPDATE produtos SET quantidade_estoque = quantidade_estoque + ? WHERE id = ?`,
+        [delta, produto_id],
+      );
+
+      await conn.commit();
+
+      const [rows] = await conn.query(
+        `SELECT m.*, p.nome AS nome_produto
+         FROM movimentacoes m
+         JOIN produtos p ON m.produto_id = p.id
+         WHERE m.id = ?`,
+        [result.insertId],
+      );
+
+      res.status(201).json(rows[0]);
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
   } catch (error) {
     next(error);
   }
@@ -129,20 +177,43 @@ exports.atualizarMovimentacao = async (req, res, next) => {
         .json({ error: 'Tipo inválido. Use "entrada" ou "saida".' });
     }
 
-    await pool.query(
-      `UPDATE movimentacoes SET produto_id = ?, tipo = ?, quantidade = ?, preco_unitario = ? WHERE id = ?`,
-      [produto_id, tipo, quantidade, preco_unitario, req.params.id],
-    );
+    const deltaAntigo =
+      movimentacao.tipo === "entrada"
+        ? -movimentacao.quantidade
+        : movimentacao.quantidade;
+    const deltaNovo = tipo === "entrada" ? quantidade : -quantidade;
 
-    const [rows] = await pool.query(
-      `SELECT m.*, p.nome AS nome_produto
-       FROM movimentacoes m
-       JOIN produtos p ON m.produto_id = p.id
-       WHERE m.id = ?`,
-      [req.params.id],
-    );
+    const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
 
-    res.json(rows[0]);
+      await conn.query(
+        `UPDATE movimentacoes SET produto_id = ?, tipo = ?, quantidade = ?, preco_unitario = ? WHERE id = ?`,
+        [produto_id, tipo, quantidade, preco_unitario, req.params.id],
+      );
+
+      await conn.query(
+        `UPDATE produtos SET quantidade_estoque = quantidade_estoque + ? WHERE id = ?`,
+        [deltaAntigo + deltaNovo, movimentacao.produto_id],
+      );
+
+      await conn.commit();
+
+      const [rows] = await conn.query(
+        `SELECT m.*, p.nome AS nome_produto
+         FROM movimentacoes m
+         JOIN produtos p ON m.produto_id = p.id
+         WHERE m.id = ?`,
+        [req.params.id],
+      );
+
+      res.json(rows[0]);
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
   } catch (error) {
     next(error);
   }
@@ -158,9 +229,33 @@ exports.deletarMovimentacao = async (req, res, next) => {
     if (!existing.length)
       return res.status(404).json({ error: "Movimentação não encontrada." });
 
-    await pool.query(`DELETE FROM movimentacoes WHERE id = ?`, [req.params.id]);
+    const delta =
+      existing[0].tipo === "entrada"
+        ? -existing[0].quantidade
+        : existing[0].quantidade;
 
-    res.json({ message: "Movimentação deletada com sucesso." });
+    const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      await conn.query(`DELETE FROM movimentacoes WHERE id = ?`, [
+        req.params.id,
+      ]);
+
+      await conn.query(
+        `UPDATE produtos SET quantidade_estoque = quantidade_estoque + ? WHERE id = ?`,
+        [delta, existing[0].produto_id],
+      );
+
+      await conn.commit();
+
+      res.json({ message: "Movimentação deletada com sucesso." });
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
   } catch (error) {
     next(error);
   }
