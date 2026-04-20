@@ -53,7 +53,7 @@ export default function ModalProduto({
       await onSalvar(valores);
       onFechar();
     } catch (error) {
-      setErro(e.response?.data?.error ?? "Erro ao salvar produto.");
+      setErro(error.response?.data?.error ?? "Erro ao salvar produto.");
     } finally {
       setSalvando(false);
     }

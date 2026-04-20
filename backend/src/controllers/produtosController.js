@@ -39,6 +39,7 @@ exports.buscarProduto = async (req, res, next) => {
 
 // POST /api/produtos
 exports.criarProduto = async (req, res, next) => {
+  const conn = await pool.getConnection();
   try {
     const { nome, preco_custo, preco_venda, quantidade_estoque } = req.body;
 
@@ -53,18 +54,39 @@ exports.criarProduto = async (req, res, next) => {
         .status(400)
         .json({ error: 'Campo "preco_venda" é obrigatório' });
 
-    const [result] = await pool.query(
+    await conn.beginTransaction();
+
+    const [result] = await conn.query(
       `INSERT INTO produtos (nome, preco_custo, preco_venda, quantidade_estoque) VALUES (?, ?, ?, ?)`,
       [nome, preco_custo, preco_venda, quantidade_estoque],
     );
 
-    const [rows] = await pool.query("SELECT * FROM produtos WHERE id = ?", [
-      result.insertId,
+    const produtoId = result.insertId;
+
+    if (quantidade_estoque > 0) {
+      await conn.query(
+        `INSERT INTO movimentacoes (produto_id, tipo, quantidade, preco_unitario, observacao) VALUES (?, 'entrada', ?, ?, ?)`,
+        [
+          produtoId,
+          quantidade_estoque,
+          preco_venda,
+          "Estoque inicial do produto",
+        ],
+      );
+    }
+
+    await conn.commit();
+
+    const [rows] = await conn.query("SELECT * FROM produtos WHERE id = ?", [
+      produtoId,
     ]);
 
     res.status(201).json(rows[0]);
   } catch (error) {
+    await conn.rollback();
     next(error);
+  } finally {
+    conn.release();
   }
 };
 

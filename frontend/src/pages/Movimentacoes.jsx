@@ -64,7 +64,7 @@ export default function Movimentacoes() {
         const { data } = await listarMovimentacoes(params);
         setMovimentacoes(data);
       } catch (error) {
-        setErroLista("Erro ao carregar movimentações");
+        setErroLista("Não foi possível carregar as movimentações.");
       } finally {
         setCarregando(false);
       }
@@ -109,7 +109,7 @@ export default function Movimentacoes() {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full items-center max-w-7xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
       <div className="flex gap-6 justify-between w-full">
         <div className="flex flex-col">
           <h1 className="text-xl font-semibold">Movimentações</h1>
@@ -227,7 +227,7 @@ export default function Movimentacoes() {
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-10 text-center text-detructive"
+                  className="px-4 py-10 text-center text-destructive"
                 >
                   {erroLista}
                 </td>
@@ -258,7 +258,8 @@ export default function Movimentacoes() {
                   </td>
                   <td className="px-4 py-3">{mov.quantidade}</td>
                   <td className="px-4 py-3">
-                    {mov.preco_unitario.toLocaleString("pt-BR", {
+                    R${" "}
+                    {Number(mov.preco_unitario ?? 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}

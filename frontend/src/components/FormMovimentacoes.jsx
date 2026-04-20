@@ -18,7 +18,7 @@ export default function FormMovimentacoes({
   produtos,
 }) {
   return (
-    <div className="flex flex-col gap-4 items-start">
+    <div className="flex flex-col gap-4">
       {erro && (
         <p className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md px-3 py-2">
           {erro}

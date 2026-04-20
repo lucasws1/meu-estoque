@@ -163,14 +163,14 @@ export default function Produtos() {
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     R${" "}
-                    {p.preco_custo?.toLocaleString("pt-BR", {
+                    {Number(p.preco_custo ?? 0)?.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     R${" "}
-                    {p.preco_venda?.toLocaleString("pt-BR", {
+                    {Number(p.preco_venda ?? 0)?.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
