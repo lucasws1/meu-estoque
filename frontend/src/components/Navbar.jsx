@@ -11,8 +11,10 @@ import {
   ClipboardList,
   House,
 } from "lucide-react"; // lucide-react já vem com o shadcn
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
+  const { logout } = useAuth();
   const { tema, alternarTema } = useTheme();
 
   const linkStyles = ({ isActive }) =>
@@ -70,7 +72,7 @@ export default function Navbar() {
             variant="outline"
             size="sm"
             className="gap-2 border-border/50"
-            onClick={() => {}}
+            onClick={() => logout()}
           >
             <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline-block cursor-pointer">Sair</span>

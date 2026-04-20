@@ -3,19 +3,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "http://192.168.0.245:5173",
-    "http://192.168.0.245",
-    "https://scorch-fringe-ultimatum.ngrok-free.dev",
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
 // Middlewares globais
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

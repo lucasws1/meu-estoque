@@ -25,7 +25,7 @@ import { deletarProduto, listarProdutos } from "@/services/produtos";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2, Pencil, SearchX, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const TIPOS = ["entrada", "saida"];
 
@@ -252,13 +252,16 @@ export default function Movimentacoes() {
               movimentacoes.map((mov) => (
                 <tr key={mov.id} className="border-t">
                   <td className="px-4 py-3">{mov.id}</td>
-                  <td className="px-4 py-3">{mov.nome_produto}</td>
+                  <td className="px-4 py-3 cursor-pointer">
+                    <Link to={`/produtos/${mov.produto_id}`}>
+                      {mov.nome_produto}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3">
                     {mov.tipo.charAt(0).toUpperCase() + mov.tipo.slice(1)}
                   </td>
                   <td className="px-4 py-3">{mov.quantidade}</td>
                   <td className="px-4 py-3">
-                    R${" "}
                     {Number(mov.preco_unitario ?? 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",

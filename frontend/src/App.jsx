@@ -14,6 +14,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import AppLayout from "./components/AppLayout";
+import DetalhesProduto from "./pages/DetalhesProduto";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route element={<AppLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/produtos" element={<Produtos />} />
+              <Route path="/produtos/:id" element={<DetalhesProduto />} />
               <Route path="/movimentacoes" element={<Movimentacoes />} />
             </Route>
           </Route>

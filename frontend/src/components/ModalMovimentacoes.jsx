@@ -78,7 +78,7 @@ export default function ModalMovimentacoes({
   if (!aberto) return null;
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="sm:max-w-lg flex w-70">
+      <DialogContent className="sm:max-w-lg flex flex-col w-70">
         <DialogHeader>
           <DialogTitle>
             {modoEdicao ? "Editar movimentação" : "Nova movimentação"}
