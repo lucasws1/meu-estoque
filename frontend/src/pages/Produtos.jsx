@@ -151,25 +151,21 @@ export default function Produtos() {
                   key={p.id}
                   className="border-t border-border hover:bg-muted/30 transition-colors"
                 >
-                  <td className="px-4 py-3 font-medium">
+                  <td className="px-4 py-3 font-medium cursor-pointer">
                     <Link to={`/produtos/${p.id}`}>{p.id}</Link>
                   </td>
 
-                  <td className="px-4 py-3 font-medium">
+                  <td className="px-4 py-3 font-medium cursor-pointer">
                     <Link to={`/produtos/${p.id}`}>{p.nome}</Link>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {p.quantidade_estoque || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    R${" "}
+                  <td className="px-4 py-3">{p.quantidade_estoque || "—"}</td>
+                  <td className="px-4 py-3">
                     {Number(p.preco_custo ?? 0)?.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    R${" "}
+                  <td className="px-4 py-3">
                     {Number(p.preco_venda ?? 0)?.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
