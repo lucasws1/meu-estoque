@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -55,6 +56,7 @@ function TabelaProdutos({ produtos, movimentacoes = null, navigate }) {
       preco_venda: mov.preco_unitario,
       preco_custo: mov.preco_unitario,
       criado_em: mov.data_movimentacao,
+      tipo: mov.tipo,
     }));
   }
 
@@ -73,7 +75,7 @@ function TabelaProdutos({ produtos, movimentacoes = null, navigate }) {
               onClick={() => navigate(`/produtos/${produto.id}`)}
             >
               <div className="grid gap-1 flex-1 w-full min-w-0">
-                <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-4">
+                <div className="grid grid-cols-[1fr_auto_auto_auto_auto] items-center gap-4">
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1 items-center">
                       <Package className="size-4 text-muted-foreground" />
@@ -81,22 +83,65 @@ function TabelaProdutos({ produtos, movimentacoes = null, navigate }) {
                         {produto.nome}
                       </span>
                     </div>
+
                     <span className="text-xs">
                       x {produto.quantidade_estoque}
                     </span>
                   </div>
-                  <span className="text-xs">
-                    {Number(produto?.preco_venda).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </span>
-                  <span className="text-muted-foreground text-xs items-center">
-                    {Number(produto?.preco_custo).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </span>
+
+                  {movimentacoes && (
+                    <div className="flex items-center gap-1.5">
+                      <Badge
+                        variant={produto.tipo === "entrada" ? "outline" : ""}
+                      >
+                        {produto.tipo === "entrada" ? (
+                          <>
+                            <MoveDown className="size-3" /> Entrada
+                          </>
+                        ) : (
+                          <>
+                            <MoveUp className="size-3" /> Saída
+                          </>
+                        )}
+                      </Badge>
+                    </div>
+                  )}
+
+                  {movimentacoes ? (
+                    <>
+                      <span className="text-xs">
+                        {(
+                          produto.quantidade_estoque *
+                          Number(produto?.preco_venda)
+                        ).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </span>
+                      <span className="text-muted-foreground text-xs items-center">
+                        {Number(produto?.preco_custo).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xs">
+                        {Number(produto?.preco_venda).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </span>
+                      <span className="text-muted-foreground text-xs items-center">
+                        {Number(produto?.preco_custo).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </span>
+                    </>
+                  )}
+
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs truncate">
                       {new Date(produto.criado_em).toLocaleDateString("pt-BR", {
