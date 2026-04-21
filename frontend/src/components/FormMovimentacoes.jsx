@@ -31,7 +31,15 @@ export default function FormMovimentacoes({
           </Label>
           <Select
             value={valores.produto_id || ""}
-            onValueChange={(v) => onChange("produto_id", v)}
+            onValueChange={(v) => {
+              onChange("produto_id", v);
+              const produtoSelecionado = produtos.find(
+                (p) => p.id === parseInt(v),
+              );
+              if (produtoSelecionado) {
+                onChange("preco_unitario", produtoSelecionado.preco_venda);
+              }
+            }}
           >
             <SelectTrigger className="w-50">
               <SelectValue placeholder="Produto" />

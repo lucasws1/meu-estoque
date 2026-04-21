@@ -58,8 +58,8 @@ export default function Movimentacoes() {
         const params = {};
         if (filtroProduto) params.produto_id = filtroProduto;
         if (filtroTipo) params.tipo = filtroTipo;
-        if (date?.from) params.data_from = date.from.toISOString();
-        if (date?.to) params.data_to = date.to.toISOString();
+        if (date?.from) params.data_from = format(date.from, "yyyy-MM-dd");
+        if (date?.to) params.data_to = format(date.to, "yyyy-MM-dd");
 
         const { data } = await listarMovimentacoes(params);
         setMovimentacoes(data);

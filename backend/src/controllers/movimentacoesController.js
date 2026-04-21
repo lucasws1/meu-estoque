@@ -36,13 +36,13 @@ exports.listarMovimentacoes = async (req, res, next) => {
     }
 
     if (data_from) {
-      sql += " AND m.data_movimentacao >= ?";
-      params.push(new Date(data_from));
+      sql += " AND DATE(m.data_movimentacao) >= ?";
+      params.push(data_from);
     }
 
     if (data_to) {
-      sql += " AND m.data_movimentacao <= ?";
-      params.push(new Date(data_to));
+      sql += " AND DATE(m.data_movimentacao) <= ?";
+      params.push(data_to);
     }
 
     sql += " ORDER BY m.data_movimentacao DESC";
@@ -167,9 +167,10 @@ exports.atualizarMovimentacao = async (req, res, next) => {
 
     const produto_id = req.body.produto_id || movimentacao.produto_id;
     const tipo = req.body.tipo || movimentacao.tipo;
-    const quantidade = req.body.quantidade || movimentacao.quantidade;
-    const preco_unitario =
-      req.body.preco_unitario || movimentacao.preco_unitario;
+    const quantidade = Number(req.body.quantidade ?? movimentacao.quantidade);
+    const preco_unitario = Number(
+      req.body.preco_unitario ?? movimentacao.preco_unitario,
+    );
 
     if (tipo && !TIPOS_VALIDOS.includes(tipo)) {
       return res
@@ -182,6 +183,17 @@ exports.atualizarMovimentacao = async (req, res, next) => {
         ? -movimentacao.quantidade
         : movimentacao.quantidade;
     const deltaNovo = tipo === "entrada" ? quantidade : -quantidade;
+
+    const [[produto]] = await pool.query(
+      `SELECT quantidade_estoque FROM produtos WHERE id = ?`,
+      [movimentacao.produto_id],
+    );
+
+    if (produto.quantidade_estoque + deltaAntigo + deltaNovo < 0) {
+      return res.status(400).json({
+        error: "Estoque insuficiente para realizar esta operação.",
+      });
+    }
 
     const conn = await pool.getConnection();
     try {
