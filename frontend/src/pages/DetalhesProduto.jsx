@@ -11,12 +11,10 @@ import {
   obterMovimentacao,
 } from "@/services/movimentacoes";
 import { atualizarProduto, obterProduto } from "@/services/produtos";
-import { set } from "date-fns";
 import {
   ArrowLeft,
   BanknoteArrowDown,
   BanknoteArrowUp,
-  Barcode,
   ClipboardPen,
   Info,
   Loader2,

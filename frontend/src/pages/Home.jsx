@@ -165,7 +165,7 @@ export default function Home() {
     );
 
   return (
-    <div className="flex flex-col gap-8 p-6 max-w-5xl mx-auto w-full">
+    <div className="flex flex-col gap-8 max-w-7xl mx-auto w-full">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Painel</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
