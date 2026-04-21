@@ -164,8 +164,6 @@ export default function Home() {
       0,
     );
 
-  console.log(valorTotalEstoque);
-
   return (
     <div className="flex flex-col gap-8 p-6 max-w-5xl mx-auto w-full">
       <div>

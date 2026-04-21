@@ -14,16 +14,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2, Package } from "lucide-react";
+import { Loader2, Moon, Package, Sun } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
+  const { tema, alternarTema } = useTheme();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -45,7 +46,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm flex flex-col gap-6">
         {/* Logo */}
         <div className="flex flex-col items-center gap-2">
@@ -107,6 +108,24 @@ export default function Login() {
           </CardContent>
         </Card>
       </div>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={alternarTema}
+        title="Alternar tema"
+        className="mt-10"
+      >
+        {tema === "dark" ? (
+          <div className="flex items-center gap-2">
+            <Sun className="h-5 w-5" /> Tema claro
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Moon className="h-5 w-5" /> Tema escuro
+          </div>
+        )}
+      </Button>
     </div>
   );
 }
