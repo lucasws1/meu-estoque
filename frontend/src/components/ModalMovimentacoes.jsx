@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -29,7 +30,15 @@ export default function ModalMovimentacoes({
   onSalvar,
   produtos,
 }) {
-  const [valores, setValores] = useState(modoEdicao ?? CAMPO_VAZIO);
+  const [valores, setValores] = useState(() => {
+    if (!modoEdicao) return CAMPO_VAZIO;
+    return {
+      ...modoEdicao,
+      data_movimentacao: modoEdicao.data_movimentacao
+        ? format(new Date(modoEdicao.data_movimentacao), "yyyy-MM-dd")
+        : "",
+    };
+  });
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 

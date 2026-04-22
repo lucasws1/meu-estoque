@@ -199,9 +199,12 @@ exports.atualizarMovimentacao = async (req, res, next) => {
     try {
       await conn.beginTransaction();
 
+      const data_movimentacao =
+        req.body.data_movimentacao || movimentacao.data_movimentacao;
+
       await conn.query(
-        `UPDATE movimentacoes SET produto_id = ?, tipo = ?, quantidade = ?, preco_unitario = ? WHERE id = ?`,
-        [produto_id, tipo, quantidade, preco_unitario, req.params.id],
+        `UPDATE movimentacoes SET produto_id = ?, tipo = ?, quantidade = ?, preco_unitario = ?, data_movimentacao = ? WHERE id = ?`,
+        [produto_id, tipo, quantidade, preco_unitario, data_movimentacao, req.params.id],
       );
 
       await conn.query(
