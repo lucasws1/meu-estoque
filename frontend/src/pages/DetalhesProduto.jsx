@@ -137,7 +137,7 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
   };
 
   return (
-    <>
+    <div className="flex flex-col xl:w-7xl mx-auto w-full gap-2">
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm text-muted-foreground">
           {movimentacoes.length}{" "}
@@ -153,8 +153,8 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
           <Plus /> Nova movimentação
         </Button>
       </div>
-      <div className="rounded-lg border border-border overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="rounded-lg border border-border overflow-x-auto">
+        <table className="w-full overflow-x-auto text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>
               <th className="text-left px-4 py-2.5 font-medium">Produto</th>
@@ -216,7 +216,7 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
           produtos={produto ? [produto] : []}
         />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -304,11 +304,8 @@ export default function DetalhesProduto() {
         </div>
       </div>
       {/* Tabs */}
-      <div className="w-[90%] mx-auto">
-        <Tabs
-          defaultValue="info"
-          className="w-full md:w-full md:max-w-7xl flex flex-col gap-4"
-        >
+      <div className="max-w-[90%] items-center align-center flex justify-center xl:max-w-7xl mx-auto">
+        <Tabs defaultValue="info" className="w-full flex gap-4">
           <TabsList>
             <TabsTrigger value="info">
               <Info />
