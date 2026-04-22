@@ -65,37 +65,41 @@ export default function Produtos() {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
-      <div className="flex justify-between items-end">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-semibold">Produtos</h1>
-          <p className="text-sm text-muted-foreground">
-            Gerencie aqui os seus produtos.
-          </p>
-        </div>
-        {/* Buscar produtos */}
-        <div className="relative flex flex-1 max-w-xl">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            placeholder="Buscar produtos..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-          />
-        </div>
-        <div>
-          <Button
-            onClick={() => {
-              setModoEdicao(null);
-              setAberto(true);
-            }}
-          >
-            + Novo Produto
-          </Button>
+    <div className="flex flex-col gap-6 w-[90%] xl:w-full xl:max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between lg:items-end">
+        <div className="flex flex-col w-full gap-4">
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col">
+              <h1 className="text-xl font-semibold">Produtos</h1>
+              <p className="text-sm text-muted-foreground truncate">
+                Gerencie os seus produtos.
+              </p>
+            </div>
+            <div>
+              <Button
+                onClick={() => {
+                  setModoEdicao(null);
+                  setAberto(true);
+                }}
+              >
+                + Novo Produto
+              </Button>
+            </div>
+          </div>
+          {/* Buscar produtos */}
+          <div className="relative flex w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              className="pl-9"
+              placeholder="Buscar produtos..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+          </div>
         </div>
       </div>
       {/* Tabela de produtos */}
-      <div className="rounded-lg border border-border overflow-hidden">
+      <div className="rounded-lg border border-border overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>

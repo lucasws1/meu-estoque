@@ -109,92 +109,108 @@ export default function Movimentacoes() {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
-      <div className="flex gap-6 justify-between w-full">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-semibold">Movimentações</h1>
-          <p className="text-sm text-muted-foreground">Gerencie seu estoque</p>
-        </div>
-        {/* Buscar movimentações
-        [Produto ▾]  [Tipo ▾]  [De: ____]  [Até: ____]  [Limpar filtros] */}
-        <div className="flex gap-4 items-center">
-          <Select value={filtroProduto} onValueChange={setFiltroProduto}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Produto" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {produtos.map((produto) => (
-                  <SelectItem key={produto.id} value={produto.id}>
-                    {produto.nome}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+    <div className="flex flex-col gap-6 w-[90%] xl:w-full xl:max-w-7xl mx-auto">
+      <div className="flex flex-col xl:flex-row gap-6 justify-between w-full">
+        <div className="flex xl:justify-between w-full gap-6 items-start">
+          <div className="flex flex-col">
+            <h1 className="text-xl font-semibold">Movimentações</h1>
+            <p className="text-sm text-muted-foreground">
+              Gerencie seu estoque
+            </p>
+          </div>
 
-          <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Tipo movim." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {TIPOS.map((tipo) => (
-                  <SelectItem key={tipo} value={tipo}>
-                    {tipo.toString().charAt(0).toUpperCase() +
-                      tipo.toString().slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-          <Field className="mx-auto w-auto">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date-picker-range"
-                  className="justify-start px-2.5 font-normal"
-                >
-                  <CalendarIcon />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "LLL dd, y")} -{" "}
-                        {format(date.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(date.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Selecione uma data</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-          </Field>
-
-          <Button variant="destructive" onClick={limparFiltros}>
-            Limpar filtros
-          </Button>
           <Button
+            className="w-42 items-center"
             onClick={() => {
               setModoEdicao(null);
               setAberto(true);
             }}
           >
-            + Nova movimentação
+            Nova movimentação
           </Button>
+        </div>
+        {/* Buscar movimentações
+        [Produto ▾]  [Tipo ▾]  [De: ____]  [Até: ____]  [Limpar filtros] */}
+        <div classname="flex items-center w-full">
+          <div className="flex gap-4 items-center w-full">
+            <div className="flex flex-col items-center lg:flex-row gap-2">
+              <Select value={filtroProduto} onValueChange={setFiltroProduto}>
+                <SelectTrigger className="w-42">
+                  <SelectValue placeholder="Produto" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {produtos.map((produto) => (
+                      <SelectItem key={produto.id} value={produto.id}>
+                        {produto.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+                <SelectTrigger className="w-42">
+                  <SelectValue placeholder="Tipo movim." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {TIPOS.map((tipo) => (
+                      <SelectItem key={tipo} value={tipo}>
+                        {tipo.toString().charAt(0).toUpperCase() +
+                          tipo.toString().slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col lg:flex-row items-center gap-2">
+              <Field className="mx-auto w-auto">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="date-picker-range"
+                      className="justify-start px-2.5 font-normal"
+                    >
+                      <CalendarIcon />
+                      {date?.from ? (
+                        date.to ? (
+                          <>
+                            {format(date.from, "LLL dd, y")} -{" "}
+                            {format(date.to, "LLL dd, y")}
+                          </>
+                        ) : (
+                          format(date.from, "LLL dd, y")
+                        )
+                      ) : (
+                        <span>Selecione uma data</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="range"
+                      defaultMonth={date?.from}
+                      selected={date}
+                      onSelect={setDate}
+                      numberOfMonths={2}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </Field>
+
+              <Button
+                variant="destructive"
+                className="w-42"
+                onClick={limparFiltros}
+              >
+                Limpar filtros
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       {/* Tabela de movimentações */}

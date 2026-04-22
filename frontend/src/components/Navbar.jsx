@@ -25,7 +25,7 @@ export default function Navbar() {
     }`;
 
   return (
-    <header className="sticky mb-20 top-3 z-50 mx-auto md:max-w-7xl w-fit md:w-full border border-border rounded-xl bg-background/15 backdrop-blur">
+    <header className="sticky mb-20 top-3 z-50 mx-auto xl:max-w-7xl w-[90%] xl:w-full border border-border rounded-xl bg-background/15 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center px-4 sm:px-6">
         {/* Lado Esquerdo: Logo */}
         <div className=" items-center hidden md:flex-1 md:flex">

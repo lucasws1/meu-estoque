@@ -67,7 +67,7 @@ function TabelaProdutos({ produtos, movimentacoes = null, navigate }) {
           Nenhum produto recente.
         </p>
       ) : (
-        <div className="grid divide-y divide-border">
+        <div className="grid divide-y divide-border overflow-x-auto">
           {produtos.map((produto) => (
             <div
               key={produto.id}
@@ -84,7 +84,7 @@ function TabelaProdutos({ produtos, movimentacoes = null, navigate }) {
                       </span>
                     </div>
 
-                    <span className="text-xs">
+                    <span className="text-xs min-w-fit">
                       x {produto.quantidade_estoque}
                     </span>
                   </div>
@@ -210,7 +210,7 @@ export default function Home() {
     );
 
   return (
-    <div className="flex flex-col gap-8 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col w-[90%] gap-8 md:max-w-7xl mx-auto md:w-full mb-5">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Painel</h1>
         <p className="text-sm text-muted-foreground mt-0.5">

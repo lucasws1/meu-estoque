@@ -29,58 +29,68 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function TabInfo({ produto }) {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div key={produto?.nome} className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
-            <Shirt className="size-3.5" />
-            Produto
-          </span>
-          <span className="text-sm text-foreground">{produto.nome}</span>
-        </div>
+    <div className="flex w-full md:max-w-7xl justify-center gap-6">
+      <div className="flex gap-4 w-full md:max-w-7xl mx-auto">
+        <div className="flex flex-col gap-4 mr-20">
+          <div key={produto?.nome} className="flex flex-col gap-1">
+            <span className="flex items-center truncate gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
+              <Shirt className="size-3.5" />
+              Produto
+            </span>
+            <span className="text-sm text-foreground">{produto.nome}</span>
+          </div>
 
-        <div key={produto?.preco_custo} className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
-            <BanknoteArrowDown className="size-3.5" />
-            Preço de Custo
-          </span>
-          <span className="text-sm text-foreground">
-            {Number(produto.preco_custo ?? 0).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </span>
+          <div key={produto?.preco_custo} className="flex flex-col gap-1">
+            <span className="flex items-center truncate gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
+              <BanknoteArrowDown className="size-3.5" />
+              Preço de Custo
+            </span>
+            <span className="text-sm text-foreground">
+              {Number(produto.preco_custo ?? 0).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </div>
+          <div key={produto?.preco_venda} className="flex flex-col gap-1">
+            <span className="flex items-center truncate gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
+              <BanknoteArrowUp className="size-3.5" />
+              Preço de Venda
+            </span>
+            <span className="text-sm text-foreground">
+              {Number(produto.preco_venda ?? 0).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </span>
+          </div>
         </div>
-        <div key={produto?.quantidade_estoque} className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
-            <Package className="size-3.5" />
-            Quantidade em Estoque
-          </span>
-          <span className="text-sm text-foreground">
-            {produto.quantidade_estoque}
-          </span>
-        </div>
-        <div key={produto?.preco_venda} className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
-            <BanknoteArrowUp className="size-3.5" />
-            Preço de Venda
-          </span>
-          <span className="text-sm text-foreground">
-            {Number(produto.preco_venda ?? 0).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </span>
-        </div>
+        <div className="flex flex-col gap-6">
+          <div
+            key={produto?.quantidade_estoque}
+            className="flex flex-col gap-1"
+          >
+            <span className="flex items-center truncate gap-1.5 text-muted-foreground font-medium uppercase tracking-wide max-w-xs">
+              <Package className="size-3.5" />
+              Estoque
+            </span>
+            <span className="text-sm text-foreground">
+              {produto.quantidade_estoque}
+            </span>
+          </div>
 
-        <div key={produto?.criado_em} className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-muted-foreground font-medium uppercase tracking-wide">
-            <Info className="size-3.5" />
-            Criado em
-          </span>
-          <span className="text-sm text-foreground">
-            {new Date(produto.criado_em).toLocaleDateString("pt-BR")}
-          </span>
+          <div
+            key={produto?.criado_em}
+            className="flex flex-col gap-1 col-span-1"
+          >
+            <span className="flex items-center truncate gap-1.5 text-muted-foreground font-medium uppercase tracking-wide max-w-xs">
+              <Info className="size-3.5" />
+              Criado em
+            </span>
+            <span className="text-sm text-foreground">
+              {new Date(produto.criado_em).toLocaleDateString("pt-BR")}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +98,7 @@ function TabInfo({ produto }) {
 }
 
 function TabMovimentacoes({ movimentacoes: movs, produto }) {
-  const [modoEdicao, setModoEdicao] = useState(null);
+  const [modoEdicao, setModoEdicao] = useState();
   const [movimentacoes, setMovimentacoes] = useState(movs);
   const [aberto, setAberto] = useState(false);
 
@@ -136,7 +146,7 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
         <Button
           size="sm"
           onClick={() => {
-            setModoEdicao(null);
+            setModoEdicao(movimentacoes?.[0] ?? produto);
             setAberto(true);
           }}
         >
@@ -265,7 +275,7 @@ export default function DetalhesProduto() {
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full">
       <div className="flex items-start justify-center gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
@@ -294,33 +304,38 @@ export default function DetalhesProduto() {
         </div>
       </div>
       {/* Tabs */}
-      <Tabs defaultValue="info" className="w-full">
-        <TabsList>
-          <TabsTrigger value="info">
-            <Info />
-            Informações
-          </TabsTrigger>
-          <TabsTrigger value="movimentacoes">
-            <ClipboardPen />
-            Movimentações
-          </TabsTrigger>
-        </TabsList>
+      <div className="w-[90%] mx-auto">
+        <Tabs
+          defaultValue="info"
+          className="w-full md:w-full md:max-w-7xl flex flex-col gap-4"
+        >
+          <TabsList>
+            <TabsTrigger value="info">
+              <Info />
+              Informações
+            </TabsTrigger>
+            <TabsTrigger value="movimentacoes">
+              <ClipboardPen />
+              Movimentações
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="info">
-          <TabInfo produto={produto} />
-        </TabsContent>
+          <TabsContent value="info">
+            <TabInfo produto={produto} />
+          </TabsContent>
 
-        <TabsContent value="movimentacoes">
-          <TabMovimentacoes movimentacoes={movimentacoes} produto={produto} />
-        </TabsContent>
-      </Tabs>
-      <ModalProduto
-        key={modoEdicao?.id ?? "novo"}
-        aberto={aberto}
-        onFechar={() => setAberto(false)}
-        modoEdicao={modoEdicao}
-        onSalvar={handleSalvar}
-      />
+          <TabsContent value="movimentacoes">
+            <TabMovimentacoes movimentacoes={movimentacoes} produto={produto} />
+          </TabsContent>
+        </Tabs>
+        <ModalProduto
+          key={modoEdicao?.id ?? "novo"}
+          aberto={aberto}
+          onFechar={() => setAberto(false)}
+          modoEdicao={modoEdicao}
+          onSalvar={handleSalvar}
+        />
+      </div>
     </div>
   );
 }
