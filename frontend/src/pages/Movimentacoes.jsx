@@ -111,7 +111,7 @@ export default function Movimentacoes() {
   return (
     <div className="flex flex-col gap-6 w-[90%] xl:w-full xl:max-w-7xl mx-auto">
       <div className="flex flex-col xl:flex-row gap-6 justify-between w-full">
-        <div className="flex xl:justify-between w-full gap-6 items-start">
+        <div className="flex xl:justify-between w-full gap-6 items-center">
           <div className="flex flex-col">
             <h1 className="text-xl font-semibold">Movimentações</h1>
             <p className="text-sm text-muted-foreground">
@@ -120,7 +120,7 @@ export default function Movimentacoes() {
           </div>
 
           <Button
-            className="w-42 items-center"
+            className="max-w-42 items-center"
             onClick={() => {
               setModoEdicao(null);
               setAberto(true);
@@ -135,7 +135,7 @@ export default function Movimentacoes() {
           <div className="flex gap-4 items-center w-full">
             <div className="flex flex-col items-center lg:flex-row gap-2">
               <Select value={filtroProduto} onValueChange={setFiltroProduto}>
-                <SelectTrigger className="w-42">
+                <SelectTrigger className="w-38 lg:w-42">
                   <SelectValue placeholder="Produto" />
                 </SelectTrigger>
                 <SelectContent>
@@ -150,7 +150,7 @@ export default function Movimentacoes() {
               </Select>
 
               <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-                <SelectTrigger className="w-42">
+                <SelectTrigger className="w-38 lg:w-42">
                   <SelectValue placeholder="Tipo movim." />
                 </SelectTrigger>
                 <SelectContent>
@@ -167,7 +167,7 @@ export default function Movimentacoes() {
             </div>
 
             <div className="flex flex-col lg:flex-row items-center gap-2">
-              <Field className="mx-auto w-auto">
+              <Field className="mx-auto w-42">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
