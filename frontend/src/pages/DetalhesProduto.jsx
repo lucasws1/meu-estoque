@@ -8,7 +8,6 @@ import {
   criarMovimentacao,
   deletarMovimentacao,
   listarMovimentacoes,
-  obterMovimentacao,
 } from "@/services/movimentacoes";
 import { atualizarProduto, obterProduto } from "@/services/produtos";
 import {
@@ -99,7 +98,7 @@ function TabInfo({ produto }) {
 
 function TabMovimentacoes({ movimentacoes: movs, produto }) {
   const [modoEdicao, setModoEdicao] = useState();
-  const [movimentacoes, setMovimentacoes] = useState(movs);
+  const [movimentacoes, setMovimentacoes] = useState(movs || []);
   const [aberto, setAberto] = useState(false);
 
   const handleSalvar = async (dados) => {
@@ -108,7 +107,8 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
         await atualizarMovimentacao(modoEdicao.id, dados);
         setModoEdicao(null);
         setAberto(false);
-        setMovimentacoes(await obterMovimentacao(modoEdicao.id));
+        const { data: movs } = await listarMovimentacoes({ produto_id: dados.produto_id });
+        setMovimentacoes(movs);
       } catch (error) {
         alert("Não foi possível atualizar a movimentação.");
       }
@@ -116,9 +116,8 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
       try {
         await criarMovimentacao(dados);
         setAberto(false);
-        setMovimentacoes(
-          await listarMovimentacoes({ produto_id: dados.produto_id }),
-        );
+        const { data: novasMovs } = await listarMovimentacoes({ produto_id: dados.produto_id });
+        setMovimentacoes(novasMovs);
       } catch (error) {
         alert("Não foi possível criar a movimentação.");
       }
@@ -146,7 +145,7 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
         <Button
           size="sm"
           onClick={() => {
-            setModoEdicao(movimentacoes?.[0] ?? produto);
+            setModoEdicao(null);
             setAberto(true);
           }}
         >

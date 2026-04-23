@@ -131,7 +131,7 @@ export default function Movimentacoes() {
         </div>
         {/* Buscar movimentações
         [Produto ▾]  [Tipo ▾]  [De: ____]  [Até: ____]  [Limpar filtros] */}
-        <div classname="flex items-center w-full">
+        <div className="flex items-center w-full">
           <div className="flex gap-4 items-center w-full">
             <div className="flex flex-col items-center lg:flex-row gap-2">
               <Select value={filtroProduto} onValueChange={setFiltroProduto}>
