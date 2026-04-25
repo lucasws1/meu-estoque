@@ -1,15 +1,24 @@
+import ModalCompraVenda from "@/components/ModalCompraVenda";
+import ModalProduto from "@/components/ModalProduto";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { criarMovimentacao } from "@/services/movimentacoes";
 import {
   atualizarProduto,
   criarProduto,
   deletarProduto,
   listarProdutos,
 } from "@/services/produtos";
-import { Loader2, Pencil, Search, SearchX, Trash2 } from "lucide-react";
+import {
+  Banknote,
+  Loader2,
+  Pencil,
+  Search,
+  SearchX,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ModalProduto from "@/components/ModalProduto";
 
 export default function Produtos() {
   const [produtos, setProdutos] = useState([]);
@@ -17,6 +26,8 @@ export default function Produtos() {
   const [erroLista, setErroLista] = useState("");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState(false);
+  const [abertoCompraVenda, setAbertoCompraVenda] = useState(false);
+  const [produto, setProduto] = useState(null);
   const [modoEdicao, setModoEdicao] = useState(null);
   const navigate = useNavigate();
 
@@ -59,6 +70,30 @@ export default function Produtos() {
       setProdutos(data);
     } catch (error) {
       setErroLista("Não foi possível carregar os produtos.");
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  const handleSalvarCompraVenda = async (dados) => {
+    setCarregando(true);
+    setErroLista("");
+    try {
+      const { data } = await criarMovimentacao(dados);
+      console.log(data);
+
+      setProdutos((prev) =>
+        prev.map((p) =>
+          p.id === data.produto_id
+            ? {
+                ...p,
+                quantidade_estoque: p.quantidade_estoque - data.quantidade,
+              }
+            : p,
+        ),
+      );
+    } catch (error) {
+      setErroLista("Não foi possível salvar a movimentação.");
     } finally {
       setCarregando(false);
     }
@@ -175,8 +210,20 @@ export default function Produtos() {
                       currency: "BRL",
                     })}
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-4 py-3 justify-end w-full flex">
+                    <div className="flex">
+                      {/* Dialog for quick sell/buy*/}
+
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setAbertoCompraVenda(true);
+                          setProduto(p);
+                        }}
+                      >
+                        <Banknote className="text-green-300 size-5" />
+                      </Button>
+
                       <Button
                         onClick={() => {
                           setModoEdicao(p);
@@ -221,6 +268,12 @@ export default function Produtos() {
         onFechar={() => setAberto(false)}
         modoEdicao={modoEdicao}
         onSalvar={handleSalvar}
+      />
+      <ModalCompraVenda
+        aberto={abertoCompraVenda}
+        onFechar={() => setAbertoCompraVenda(false)}
+        onSalvar={handleSalvarCompraVenda}
+        produto={produto}
       />
     </div>
   );
