@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Meu Estoque</string>
+    <string name="title_activity_main">Meu Estoque</string>
+    <string name="package_name">com.lucasws.meuestoque</string>
+    <string name="custom_url_scheme">com.lucasws.meuestoque</string>
+</resources>
