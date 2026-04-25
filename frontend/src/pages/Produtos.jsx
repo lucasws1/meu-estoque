@@ -82,12 +82,17 @@ export default function Produtos() {
       const { data } = await criarMovimentacao(dados);
       console.log(data);
 
+      const quantidade = (produto) =>
+        data.tipo === "entrada"
+          ? produto.quantidade_estoque + Number(data.quantidade)
+          : produto.quantidade_estoque - Number(data.quantidade);
+
       setProdutos((prev) =>
         prev.map((p) =>
           p.id === data.produto_id
             ? {
                 ...p,
-                quantidade_estoque: p.quantidade_estoque - data.quantidade,
+                quantidade_estoque: quantidade(p),
               }
             : p,
         ),
