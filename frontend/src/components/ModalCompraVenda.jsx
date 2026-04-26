@@ -25,18 +25,20 @@ export default function ModalCompraVenda({
   const [erro, setErro] = useState("");
   const [tabAtual, setTabAtual] = useState("saida");
 
+  console.log("Valores: " + valores.quantidade);
+
   useEffect(() => {
-    setValores({
+    const valoresIniciais = {
       produto_id: produto?.id,
       data_movimentacao: new Date().toISOString().split("T")[0],
-      tipo: tabAtual === "saida" ? "saida" : "entrada",
-      quantidade: "",
+      tipo: tabAtual === "entrada" ? "entrada" : "saida",
+      quantidade: 1,
       preco_unitario:
-        tabAtual === "saida"
-          ? (produto?.preco_venda ?? "")
-          : produto?.preco_custo,
+        tabAtual === "entrada" ? produto?.preco_custo : produto?.preco_venda,
       observacao: "",
-    });
+    };
+
+    setValores(valoresIniciais);
   }, [produto, tabAtual]);
 
   const handleChange = (campo, valor) => {
@@ -64,13 +66,8 @@ export default function ModalCompraVenda({
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
       <DialogContent>
-        <Tabs
-          defaultValue="saida"
-          value={tabAtual}
-          onValueChange={setTabAtual}
-          className="w-full"
-        >
-          <TabsList>
+        <Tabs defaultValue="saida" value={tabAtual} onValueChange={setTabAtual}>
+          <TabsList variant="line" className="w-full mb-2">
             <TabsTrigger value="saida">Vender</TabsTrigger>
             <TabsTrigger value="entrada">Comprar</TabsTrigger>
           </TabsList>
@@ -89,7 +86,10 @@ export default function ModalCompraVenda({
             />
           </TabsContent>
           <DialogFooter className="mt-5">
-            <Button onClick={handleSalvar}>Confirmar</Button>
+            <Button onClick={handleSalvar} disabled={salvando}>
+              {salvando && <Loader2 className="animate-spin" />}
+              {salvando ? "Salvando..." : "Salvar"}
+            </Button>
             <Button variant="outline" onClick={onFechar}>
               Cancelar
             </Button>
