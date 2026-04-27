@@ -62,16 +62,18 @@ export default function ModalProduto({
   if (!aberto) return null;
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-xs">
+        <DialogHeader className="border-b pb-6">
+          <DialogDescription className="text-xs">
+            {modoEdicao ? "EDITAR PRODUTO" : "NOVO PRODUTO"}
+          </DialogDescription>
           <DialogTitle>
-            {modoEdicao ? "Editar produto" : "Novo produto"}
+            {modoEdicao ? (
+              <div>{modoEdicao.nome}</div>
+            ) : (
+              <div>{valores.nome || "—"}</div>
+            )}
           </DialogTitle>
-          {modoEdicao ? (
-            <DialogDescription>{modoEdicao.nome}</DialogDescription>
-          ) : (
-            ""
-          )}
         </DialogHeader>
         <FormProduto valores={valores} onChange={handleChange} erro={erro} />
         <DialogFooter>

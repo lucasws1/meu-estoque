@@ -80,7 +80,6 @@ export default function Produtos() {
     setErroLista("");
     try {
       const { data } = await criarMovimentacao(dados);
-      console.log(data);
 
       const quantidade = (produto) =>
         data.tipo === "entrada"

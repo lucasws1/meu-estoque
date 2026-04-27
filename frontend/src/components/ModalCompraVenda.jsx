@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import FormEntrada from "./FormEntrada";
 import FormSaida from "./FormSaida";
 import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 const CAMPO_VAZIO = {
   produto_id: "",
@@ -25,8 +26,6 @@ export default function ModalCompraVenda({
   const [erro, setErro] = useState("");
   const [tabAtual, setTabAtual] = useState("saida");
 
-  console.log("Valores: " + valores.quantidade);
-
   useEffect(() => {
     const valoresIniciais = {
       produto_id: produto?.id,
@@ -46,7 +45,7 @@ export default function ModalCompraVenda({
   };
 
   const handleSalvar = async () => {
-    if (!valores.quantidade.trim()) {
+    if (!valores.quantidade) {
       setErro('O campo "quantidade" é obrigatório.');
       return;
     }
@@ -64,8 +63,8 @@ export default function ModalCompraVenda({
 
   if (!aberto) return;
   return (
-    <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent>
+    <Dialog className="w-full" open={aberto} onOpenChange={onFechar}>
+      <DialogContent className="w-full">
         <Tabs defaultValue="saida" value={tabAtual} onValueChange={setTabAtual}>
           <TabsList variant="line" className="w-full mb-2">
             <TabsTrigger value="saida">Vender</TabsTrigger>
@@ -85,10 +84,14 @@ export default function ModalCompraVenda({
               handleChange={handleChange}
             />
           </TabsContent>
-          <DialogFooter className="mt-5">
-            <Button onClick={handleSalvar} disabled={salvando}>
+          <DialogFooter className="mt-5 grid grid-cols-2">
+            <Button
+              className="bg-green-700 text-white hover:bg-green-500"
+              onClick={handleSalvar}
+              disabled={salvando}
+            >
               {salvando && <Loader2 className="animate-spin" />}
-              {salvando ? "Salvando..." : "Salvar"}
+              {salvando ? "Salvando..." : "OK"}
             </Button>
             <Button variant="outline" onClick={onFechar}>
               Cancelar

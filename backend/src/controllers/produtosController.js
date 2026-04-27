@@ -14,6 +14,9 @@ exports.listarProdutos = async (req, res, next) => {
       params.push(`%${nome}%`);
     }
 
+    // Ordena do mais recente para o mais antigo usando a coluna `criado_em`
+    sql += " ORDER BY criado_em DESC";
+
     const [rows] = await pool.query(sql, params);
     res.json(rows);
   } catch (error) {

@@ -45,7 +45,7 @@ exports.listarMovimentacoes = async (req, res, next) => {
       params.push(data_to);
     }
 
-    sql += " ORDER BY m.data_movimentacao DESC";
+    sql += " ORDER BY m.data_movimentacao DESC, m.id DESC";
 
     const [rows] = await pool.query(sql, params);
     res.json(rows);
@@ -204,7 +204,14 @@ exports.atualizarMovimentacao = async (req, res, next) => {
 
       await conn.query(
         `UPDATE movimentacoes SET produto_id = ?, tipo = ?, quantidade = ?, preco_unitario = ?, data_movimentacao = ? WHERE id = ?`,
-        [produto_id, tipo, quantidade, preco_unitario, data_movimentacao, req.params.id],
+        [
+          produto_id,
+          tipo,
+          quantidade,
+          preco_unitario,
+          data_movimentacao,
+          req.params.id,
+        ],
       );
 
       await conn.query(
