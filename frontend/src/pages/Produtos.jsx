@@ -13,6 +13,7 @@ import {
   Banknote,
   Loader2,
   Pencil,
+  Plus,
   Search,
   SearchX,
   Trash2,
@@ -121,7 +122,8 @@ export default function Produtos() {
                   setAberto(true);
                 }}
               >
-                + Novo Produto
+                <Plus />
+                Novo Produto
               </Button>
             </div>
           </div>

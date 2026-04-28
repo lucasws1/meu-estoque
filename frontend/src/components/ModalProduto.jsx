@@ -63,7 +63,7 @@ export default function ModalProduto({
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
       <DialogContent className="sm:max-w-xs">
-        <DialogHeader className="border-b pb-6">
+        <DialogHeader className="border-b pb-4">
           <DialogDescription className="text-xs">
             {modoEdicao ? "EDITAR PRODUTO" : "NOVO PRODUTO"}
           </DialogDescription>
