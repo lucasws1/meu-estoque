@@ -1,20 +1,12 @@
-import "./App.css";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  NavLink,
-  Navigate,
-} from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Produtos from "./pages/Produtos";
-import Movimentacoes from "./pages/Movimentacoes";
-import Home from "./pages/Home";
-import { AuthProvider } from "./context/AuthContext";
-import Login from "./pages/Login";
-import PrivateRoute from "./components/PrivateRoute";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
+import PrivateRoute from "./components/PrivateRoute";
+import { AuthProvider } from "./context/AuthContext";
 import DetalhesProduto from "./pages/DetalhesProduto";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Movimentacoes from "./pages/Movimentacoes";
+import Produtos from "./pages/Produtos";
 
 function App() {
   return (
