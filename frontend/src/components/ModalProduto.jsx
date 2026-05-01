@@ -15,7 +15,7 @@ const CAMPO_VAZIO = {
   nome: "",
   preco_custo: "",
   preco_venda: "",
-  quantidade_estoque: "",
+  quantidade_estoque: 0,
 };
 
 export default function ModalProduto({
@@ -61,13 +61,13 @@ export default function ModalProduto({
 
   if (!aberto) return null;
   return (
-    <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="sm:max-w-xs">
+    <Dialog className="w-full" open={aberto} onOpenChange={onFechar}>
+      <DialogContent className="w-full">
         <DialogHeader className="border-b pb-4">
           <DialogDescription className="text-xs">
             {modoEdicao ? "EDITAR PRODUTO" : "NOVO PRODUTO"}
           </DialogDescription>
-          <DialogTitle>
+          <DialogTitle className="text-xl">
             {modoEdicao ? (
               <div>{modoEdicao.nome}</div>
             ) : (
@@ -76,13 +76,22 @@ export default function ModalProduto({
           </DialogTitle>
         </DialogHeader>
         <FormProduto valores={valores} onChange={handleChange} erro={erro} />
-        <DialogFooter>
-          <Button variant="outline" onClick={onFechar} disabled={salvando}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSalvar} disabled={salvando}>
+        <DialogFooter className="mt-5 grid grid-cols-2">
+          <Button
+            onClick={handleSalvar}
+            disabled={salvando}
+            className="w-full cursor-pointer bg-green-700 text-white"
+          >
             {salvando && <Loader2 className="animate-spin" />}
             {salvando ? "Salvando..." : "Salvar"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onFechar}
+            disabled={salvando}
+            className="w-full cursor-pointer"
+          >
+            Cancelar
           </Button>
         </DialogFooter>
       </DialogContent>

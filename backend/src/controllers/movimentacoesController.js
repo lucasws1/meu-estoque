@@ -45,7 +45,7 @@ exports.listarMovimentacoes = async (req, res, next) => {
       params.push(data_to);
     }
 
-    sql += " ORDER BY m.data_movimentacao DESC, m.id DESC";
+    sql += " ORDER BY m.id DESC";
 
     const [rows] = await pool.query(sql, params);
     res.json(rows);

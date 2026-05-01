@@ -66,7 +66,7 @@ export default function ModalCompraVenda({
     <Dialog className="w-full" open={aberto} onOpenChange={onFechar}>
       <DialogContent className="w-full">
         <Tabs defaultValue="saida" value={tabAtual} onValueChange={setTabAtual}>
-          <TabsList variant="line" className="w-full mb-2">
+          <TabsList variant="line" className="mb-2 w-full">
             <TabsTrigger value="saida">Vender</TabsTrigger>
             <TabsTrigger value="entrada">Comprar</TabsTrigger>
           </TabsList>
