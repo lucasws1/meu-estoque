@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { CheckIcon, Loader2, LoaderCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import FormMovimentacoes from "./FormMovimentacoes";
+import StepProduto from "./StepProduto";
 import {
   Stepper,
   StepperContent,
@@ -22,6 +22,8 @@ import {
   StepperTitle,
   StepperTrigger,
 } from "@/components/reui/stepper";
+import StepTipo from "./StepTipo";
+import StepQuantidade from "./StepQuantidade";
 
 const TIPOS = ["entrada", "saida"];
 
@@ -47,6 +49,9 @@ export default function ModalMovimentacoes({
   onSalvar,
   produtos,
 }) {
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
   const [valores, setValores] = useState(() => {
     if (!modoEdicao) return CAMPO_VAZIO;
     return {
@@ -56,9 +61,17 @@ export default function ModalMovimentacoes({
         : "",
     };
   });
-  const [salvando, setSalvando] = useState(false);
-  const [erro, setErro] = useState("");
-  const [currentStep, setCurrentStep] = useState(1);
+
+  const handleVoltar = (goToStep = null) => {
+    if (goToStep && goToStep < currentStep) {
+      setCurrentStep(goToStep);
+    } else if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    } else {
+      onFechar();
+      setValores(CAMPO_VAZIO);
+    }
+  };
 
   const handleChange = (campo, valor) => {
     setValores((v) => ({ ...v, [campo]: valor }));
@@ -74,19 +87,19 @@ export default function ModalMovimentacoes({
 
   const handleSalvar = async () => {
     if (!valores.produto_id) {
-      setErro('O campo "produto_id" é obrigatório.');
+      setErro("O campo produto é obrigatório.");
       return;
     }
-    if (!valores.tipo.trim()) {
-      setErro('O campo "tipo" é obrigatório.');
+    if (!valores.tipo) {
+      setErro("O campo tipo é obrigatório.");
       return;
     }
     if (!valores.quantidade) {
-      setErro('O campo "quantidade" é obrigatório.');
+      setErro("O campo quantidade é obrigatório.");
       return;
     }
     if (!valores.preco_unitario) {
-      setErro('O campo "preco_unitario" é obrigatório.');
+      setErro("O campo preço unitário é obrigatório.");
       return;
     }
 
@@ -95,6 +108,7 @@ export default function ModalMovimentacoes({
     try {
       await onSalvar(valores);
       onFechar();
+      setValores(CAMPO_VAZIO);
     } catch (error) {
       setErro(error?.response?.data?.error ?? "Erro ao salvar movimentação.");
     } finally {
@@ -105,7 +119,7 @@ export default function ModalMovimentacoes({
   if (!aberto) return null;
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="flex w-full flex-col">
+      <DialogContent className="flex flex-col">
         <DialogHeader className="mb-4 gap-0">
           <DialogDescription className="text-muted-foreground mb-0 text-xs font-normal">
             {modoEdicao ? "EDITAR MOVIMENTAÇÃO" : "NOVA MOVIMENTAÇÃO"}
@@ -115,16 +129,20 @@ export default function ModalMovimentacoes({
             <DialogTitle className="text-lg">
               {produtos.find((p) => p.id === modoEdicao.produto_id)?.nome}
             </DialogTitle>
+          ) : currentStep === 1 ? (
+            <DialogTitle className="text-lg">Selecione o produto</DialogTitle>
+          ) : currentStep === 2 ? (
+            <DialogTitle className="text-lg">
+              Selecione o tipo de movimentação
+            </DialogTitle>
           ) : (
-            currentStep === 1 && (
-              <DialogTitle className="text-lg">Selecione o produto</DialogTitle>
-            )
+            <DialogTitle className="text-lg">Defina a quantidade</DialogTitle>
           )}
         </DialogHeader>
         <Stepper
           value={currentStep}
           onValueChange={setCurrentStep}
-          className="w-full space-y-6"
+          className="w-full"
           defaultValue={1}
           indicators={{
             completed: <CheckIcon className="size-3.5" />,
@@ -148,47 +166,84 @@ export default function ModalMovimentacoes({
               </StepperItem>
             ))}
           </StepperNav>
-          <StepperPanel className="w-full text-sm">
+          <StepperPanel className="text-sm">
             <StepperContent
               key={1}
               value={1}
-              className="flex w-full items-center justify-start"
+              className="flex w-full items-center"
             >
-              <FormMovimentacoes
-                valores={valores}
-                onChange={handleChange}
-                erro={erro}
-                produtos={produtos}
-              />
+              <div className="flex flex-col">
+                <StepProduto
+                  valores={valores}
+                  onChange={handleChange}
+                  erro={erro}
+                  produtos={produtos}
+                />
+              </div>
             </StepperContent>
-            {/* {steps.map((step, index) => (
-              <StepperContent
-                key={index}
-                value={index + 1}
-                className="flex items-center justify-center"
-              >
-                Step {step.title} content
-              </StepperContent>
-            ))} */}
+            <StepperContent
+              key={2}
+              value={2}
+              className="flex w-full items-center"
+            >
+              <div className="flex">
+                <StepTipo
+                  valores={valores}
+                  onChange={handleChange}
+                  erro={erro}
+                  produtos={produtos}
+                  handleVoltar={handleVoltar}
+                />
+              </div>
+            </StepperContent>
+            <StepperContent
+              key={3}
+              value={3}
+              className="flex w-full items-center"
+            >
+              <div className="flex">
+                <StepQuantidade
+                  valores={valores}
+                  onChange={handleChange}
+                  erro={erro}
+                  produtos={produtos}
+                  handleVoltar={handleVoltar}
+                />
+              </div>
+            </StepperContent>
           </StepperPanel>
         </Stepper>
-
-        <DialogFooter className="grid grid-cols-2 justify-end gap-2">
-          <Button
-            onClick={handleSalvar}
-            disabled={salvando}
-            className="w-full bg-green-600 text-white"
-          >
-            {salvando && <Loader2 className="animate-spin" />}
-            {salvando ? "Salvando" : "Salvar"}
-          </Button>
+        <DialogFooter className="mt-2 flex justify-end gap-4">
           <Button
             variant="outline"
-            onClick={onFechar}
+            onClick={handleVoltar}
             disabled={salvando}
-            className="w-full"
+            className="w-full flex-1 py-4"
           >
-            Cancelar
+            {currentStep > 1 ? "Voltar" : "Cancelar"}
+          </Button>
+          <Button
+            onClick={
+              currentStep < 3
+                ? () => setCurrentStep(currentStep + 1)
+                : handleSalvar
+            }
+            disabled={
+              (currentStep === 1 && !valores.produto_id) ||
+              (currentStep === 2 && !valores.tipo) ||
+              (currentStep === 3 && !valores.quantidade) ||
+              salvando
+            }
+            className="w-full flex-1 bg-green-600 py-4 text-white"
+          >
+            {currentStep === 3 ? (
+              <>
+                {salvando && <Loader2 className="animate-spin" />}
+                {salvando ? "Salvando..." : "Salvar"}
+              </>
+            ) : (
+              <>{valores.produto_id ? "Avançar" : "Selecionar Produto"}</>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

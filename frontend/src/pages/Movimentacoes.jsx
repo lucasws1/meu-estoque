@@ -1,7 +1,7 @@
 import ModalMovimentacoes from "@/components/ModalMovimentacoes";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import {
   Popover,
   PopoverContent,
@@ -21,9 +21,16 @@ import {
   deletarMovimentacao,
   listarMovimentacoes,
 } from "@/services/movimentacoes";
-import { deletarProduto, listarProdutos } from "@/services/produtos";
+import { listarProdutos } from "@/services/produtos";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2, Pencil, SearchX, Trash2 } from "lucide-react";
+import {
+  CalendarIcon,
+  Eye,
+  Loader2,
+  Pencil,
+  SearchX,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -90,6 +97,7 @@ export default function Movimentacoes() {
   };
 
   const handleSalvar = async (dados) => {
+    console.log(JSON.stringify(dados, null, 2));
     if (modoEdicao) {
       await atualizarMovimentacao(modoEdicao.id, dados);
     } else {
@@ -108,13 +116,17 @@ export default function Movimentacoes() {
     }
   };
 
+  const visualizarMovimentacao = (id) => {
+    navigate(`/movimentacoes/${id}`);
+  };
+
   return (
-    <div className="flex flex-col gap-6 w-[90%] xl:w-full xl:max-w-7xl mx-auto">
-      <div className="flex flex-col xl:flex-row gap-6 justify-between w-full">
-        <div className="flex xl:justify-between w-full gap-6 items-center">
+    <div className="mx-auto flex w-[90%] flex-col gap-6 xl:w-full xl:max-w-7xl">
+      <div className="flex w-full flex-col justify-between gap-6 xl:flex-row">
+        <div className="flex w-full items-center gap-6 xl:justify-between">
           <div className="flex flex-col">
             <h1 className="text-xl font-semibold">Movimentações</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Gerencie seu estoque
             </p>
           </div>
@@ -131,9 +143,9 @@ export default function Movimentacoes() {
         </div>
         {/* Buscar movimentações
         [Produto ▾]  [Tipo ▾]  [De: ____]  [Até: ____]  [Limpar filtros] */}
-        <div className="flex items-center w-full">
-          <div className="flex gap-4 items-center w-full">
-            <div className="flex flex-col items-center lg:flex-row gap-2">
+        <div className="flex w-full items-center">
+          <div className="flex w-full items-center gap-4">
+            <div className="flex flex-col items-center gap-2 lg:flex-row">
               <Select value={filtroProduto} onValueChange={setFiltroProduto}>
                 <SelectTrigger className="w-38 lg:w-42">
                   <SelectValue placeholder="Produto" />
@@ -166,7 +178,7 @@ export default function Movimentacoes() {
               </Select>
             </div>
 
-            <div className="flex flex-col lg:flex-row items-center gap-2">
+            <div className="flex flex-col items-center gap-2 lg:flex-row">
               <Field className="mx-auto w-42">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -214,7 +226,7 @@ export default function Movimentacoes() {
         </div>
       </div>
       {/* Tabela de movimentações */}
-      <div className="rounded-lg w-full border border-border overflow-hidden">
+      <div className="border-border w-full overflow-hidden rounded-lg border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>
@@ -232,9 +244,9 @@ export default function Movimentacoes() {
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-10 text-center text-muted-foreground"
+                  className="text-muted-foreground px-4 py-10 text-center"
                 >
-                  <Loader2 className="animate-spin mx-auto size-5" />
+                  <Loader2 className="mx-auto size-5 animate-spin" />
                 </td>
               </tr>
             )}
@@ -243,7 +255,7 @@ export default function Movimentacoes() {
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-10 text-center text-destructive"
+                  className="text-destructive px-4 py-10 text-center"
                 >
                   {erroLista}
                 </td>
@@ -253,7 +265,7 @@ export default function Movimentacoes() {
             {!carregando && !erroLista && movimentacoes.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-10 text-center">
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <div className="text-muted-foreground flex flex-col items-center gap-2">
                     <SearchX className="size-8" />
                     <span className="text-sm">
                       Nenhuma movimentação encontrada.
@@ -268,7 +280,7 @@ export default function Movimentacoes() {
               movimentacoes.map((mov) => (
                 <tr key={mov.id} className="border-t">
                   <td className="px-4 py-3">{mov.id}</td>
-                  <td className="px-4 py-3 cursor-pointer">
+                  <td className="cursor-pointer px-4 py-3">
                     <Link to={`/produtos/${mov.produto_id}`}>
                       {mov.nome_produto}
                     </Link>
@@ -291,6 +303,13 @@ export default function Movimentacoes() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => visualizarMovimentacao(mov.id)}
+                      >
+                        <Eye className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setModoEdicao(mov);
                           setAberto(true);
@@ -303,7 +322,7 @@ export default function Movimentacoes() {
                         size="sm"
                         onClick={() => handleExcluir(mov.id)}
                       >
-                        <Trash2 className="size-4 text-destructive" />
+                        <Trash2 className="text-destructive size-4" />
                       </Button>
                     </div>
                   </td>
@@ -313,20 +332,19 @@ export default function Movimentacoes() {
         </table>
       </div>
       {movimentacoes.length > 0 && !carregando && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {movimentacoes.length}{" "}
           {movimentacoes.length === 1 ? "movimentação" : "movimentações"}{" "}
           encontrada{movimentacoes.length === 1 ? "" : "s"}
         </p>
       )}
       <Button
-        className="cursor cursor-pointer w-24 mx-auto"
+        className="cursor mx-auto w-24 cursor-pointer"
         onClick={() => navigate(-1)}
       >
         Voltar
       </Button>
 
-      {/* Modal */}
       <ModalMovimentacoes
         key={modoEdicao?.id ?? "novo"}
         aberto={aberto}
