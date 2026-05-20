@@ -1,8 +1,6 @@
 import ModalMovimentacoes from "@/components/ModalMovimentacoes";
 import ModalProduto from "@/components/ModalProduto";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Popover,
   PopoverContent,
@@ -16,86 +14,86 @@ import {
 } from "@/services/movimentacoes";
 import { atualizarProduto, obterProduto } from "@/services/produtos";
 import {
+  ArrowDown,
   ArrowLeft,
+  ArrowUp,
   BanknoteArrowDown,
   BanknoteArrowUp,
   ClipboardPen,
-  ExternalLink,
   ExternalLinkIcon,
-  Info,
   Loader2,
   Package,
   Pencil,
   Plus,
-  Shirt,
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-function TabInfo({ produto }) {
+function TabInfo({ movimentacoes, produto }) {
+  const entradas = movimentacoes.filter((m) => m.tipo === "entrada").length;
+  const saidas = movimentacoes.filter((m) => m.tipo === "saida").length;
+
   return (
-    <div className="flex w-full justify-center gap-6 md:max-w-7xl">
-      <div className="mx-auto flex w-full gap-4 md:max-w-7xl">
-        <div className="mr-20 flex flex-col gap-4">
-          <div key={produto?.nome} className="flex flex-col gap-1">
-            <span className="text-muted-foreground flex items-center gap-1.5 truncate font-medium tracking-wide uppercase">
-              <Shirt className="size-3.5" />
-              Produto
-            </span>
-            <span className="text-foreground text-sm">{produto.nome}</span>
-          </div>
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="bg-muted/10 flex flex-col gap-1 rounded-lg border p-4">
+        <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium uppercase">
+          <BanknoteArrowDown className="size-3.5" />
+          Preço de Custo
+        </span>
+        <span className="text-foreground text-base font-semibold">
+          {Number(produto.preco_custo ?? 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        </span>
+      </div>
 
-          <div key={produto?.preco_custo} className="flex flex-col gap-1">
-            <span className="text-muted-foreground flex items-center gap-1.5 truncate font-medium tracking-wide uppercase">
-              <BanknoteArrowDown className="size-3.5" />
-              Preço de Custo
-            </span>
-            <span className="text-foreground text-sm">
-              {Number(produto.preco_custo ?? 0).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-          </div>
-          <div key={produto?.preco_venda} className="flex flex-col gap-1">
-            <span className="text-muted-foreground flex items-center gap-1.5 truncate font-medium tracking-wide uppercase">
-              <BanknoteArrowUp className="size-3.5" />
-              Preço de Venda
-            </span>
-            <span className="text-foreground text-sm">
-              {Number(produto.preco_venda ?? 0).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-6">
-          <div
-            key={produto?.quantidade_estoque}
-            className="flex flex-col gap-1"
-          >
-            <span className="text-muted-foreground flex max-w-xs items-center gap-1.5 truncate font-medium tracking-wide uppercase">
-              <Package className="size-3.5" />
-              Estoque
-            </span>
-            <span className="text-foreground text-sm">
-              {produto.quantidade_estoque}
-            </span>
-          </div>
+      <div className="bg-muted/10 flex flex-col gap-1 rounded-lg border p-4">
+        <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium uppercase">
+          <BanknoteArrowUp className="size-3.5" />
+          Preço de Venda
+        </span>
+        <span className="text-foreground text-base font-semibold">
+          {Number(produto.preco_venda ?? 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        </span>
+      </div>
 
-          <div
-            key={produto?.criado_em}
-            className="col-span-1 flex flex-col gap-1"
-          >
-            <span className="text-muted-foreground flex max-w-xs items-center gap-1.5 truncate font-medium tracking-wide uppercase">
-              <Info className="size-3.5" />
-              Criado em
-            </span>
-            <span className="text-foreground text-sm">
-              {new Date(produto.criado_em).toLocaleDateString("pt-BR")}
-            </span>
+      <div className="bg-muted/10 flex flex-col gap-1 rounded-lg border p-4">
+        <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium uppercase">
+          <Package className="size-3.5" />
+          Estoque
+        </span>
+        <span className="text-foreground text-base font-semibold">
+          {produto.quantidade_estoque} un.
+        </span>
+      </div>
+
+      <div className="bg-muted/10 flex flex-col gap-2 rounded-lg border p-4">
+        <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium uppercase">
+          <ClipboardPen className="size-3.5" />
+          {movimentacoes.length === 1 ? "Movimentação" : "Movimentações"}
+        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-foreground text-base font-semibold">
+            {movimentacoes.length}
+          </span>
+          <div className="flex items-center gap-2 text-sm">
+            {entradas > 0 && (
+              <span className="flex items-center gap-0.5 text-green-500">
+                <ArrowDown className="size-3.5" />
+                {entradas}
+              </span>
+            )}
+            {saidas > 0 && (
+              <span className="flex items-center gap-0.5 text-red-500">
+                <ArrowUp className="size-3.5" />
+                {saidas}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -147,22 +145,7 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
   };
 
   return (
-    <div className="mx-auto flex w-full flex-col gap-2 xl:w-7xl">
-      <div className="mb-4 flex items-center justify-between">
-        <span className="text-muted-foreground text-sm">
-          {movimentacoes.length}{" "}
-          {movimentacoes.length === 1 ? "movimentação" : "movimentações"}
-        </span>
-        <Button
-          size="sm"
-          onClick={() => {
-            setModoEdicao(null);
-            setAberto(true);
-          }}
-        >
-          <Plus /> Movimentar
-        </Button>
-      </div>
+    <div className="mx-auto flex w-full min-w-fit flex-col gap-2">
       <div className="border-border overflow-x-auto rounded-lg border">
         <table className="w-full overflow-x-auto text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
@@ -172,14 +155,15 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
               <th className="px-4 py-2.5 text-left font-medium">Preço</th>
               <th className="px-4 py-2.5 text-left font-medium">Data</th>
               <th className="px-4 py-2.5 text-left font-medium">Observação</th>
-              <th className="py-2.5 pr-10 pl-4 text-right font-medium">
-                Ações
-              </th>
+              <th className="px-4 py-2.5 text-center font-medium">Ações</th>
             </tr>
           </thead>
           <tbody>
             {movimentacoes.map((mov) => (
-              <tr key={mov.id} className="border-border border-b">
+              <tr
+                key={mov.id}
+                className="border-border even:bg-muted/30 border-b"
+              >
                 <td className="px-4 py-2.5">
                   {mov.tipo.toString().charAt(0).toUpperCase() +
                     mov.tipo.toString().slice(1)}
@@ -204,12 +188,15 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
                   {mov.observacao ? (
                     <Popover>
                       <PopoverTrigger asChild>
-                        <div className="flex w-80 cursor-pointer items-center gap-1 text-sm">
-                          <span className="block truncate">
+                        <div
+                          className="flex w-80 cursor-pointer items-center gap-1 text-sm"
+                          title="Clique para ver completo"
+                        >
+                          <span className="block truncate underline decoration-dotted underline-offset-2">
                             {mov.observacao}
                           </span>
-                          <div>
-                            <ExternalLinkIcon className="size-3" />
+                          <div className="shrink-0">
+                            <ExternalLinkIcon className="text-muted-foreground size-3" />
                           </div>
                         </div>
                       </PopoverTrigger>
@@ -221,28 +208,30 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
                       </PopoverContent>
                     </Popover>
                   ) : (
-                    "-"
+                    <span className="text-muted-foreground">—</span>
                   )}
                 </td>
-                <td className="px-4 py-2.5 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setModoEdicao(mov);
-                      setAberto(true);
-                    }}
-                  >
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleExcluir(mov.id)}
-                    className="text-red-500"
-                  >
-                    <Trash2 />
-                  </Button>
+                <td className="px-4 py-2.5 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setModoEdicao(mov);
+                        setAberto(true);
+                      }}
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleExcluir(mov.id)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -266,6 +255,8 @@ function TabMovimentacoes({ movimentacoes: movs, produto }) {
 export default function DetalhesProduto() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const TIPOS = ["entrada", "saída"];
+  console.log(TIPOS);
 
   const [produto, setProduto] = useState(null);
   const [movimentacoes, setMovimentacoes] = useState([]);
@@ -318,64 +309,61 @@ export default function DetalhesProduto() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-      <div className="flex items-start justify-center gap-4">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => navigate(-1)} title="Voltar">
-              <ArrowLeft />
-            </Button>
-            <h1 className="text-xl font-semibold">
-              {produto?.nome || "Produto Sem Nome"}
-            </h1>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setModoEdicao(produto);
-                setAberto(true);
-              }}
-            >
-              <Pencil />
-            </Button>
-          </div>
-          <div className="flex items-center gap-2 pl-8">
-            <Badge variant="outline" className="font-mono">
-              {produto?.quantidade_estoque} unid. em estoque
-            </Badge>
-          </div>
+    <div className="mx-auto flex w-full max-w-[90%] flex-col gap-6 xl:max-w-7xl">
+      {/* Cabeçalho alinhado ao mesmo container do conteúdo */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(-1)}
+            title="Voltar"
+          >
+            <ArrowLeft />
+          </Button>
+          <h1 className="text-xl font-semibold">
+            {produto?.nome || "Produto Sem Nome"}
+          </h1>
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            className="flex items-center gap-2"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setModoEdicao(produto);
+              setAberto(true);
+            }}
+          >
+            <Pencil /> Editar Produto
+          </Button>
+          <Button
+            className="flex items-center gap-2"
+            size="sm"
+            onClick={() => {
+              setModoEdicao(null);
+              setAberto(true);
+            }}
+          >
+            <Plus /> Movimentar
+          </Button>
         </div>
       </div>
-      {/* Tabs */}
-      <div className="align-center mx-auto flex max-w-[90%] items-center justify-center xl:max-w-7xl">
-        <Tabs defaultValue="info" className="flex w-full gap-4">
-          <TabsList>
-            <TabsTrigger value="info">
-              <Info />
-              Informações
-            </TabsTrigger>
-            <TabsTrigger value="movimentacoes">
-              <ClipboardPen />
-              Movimentações
-            </TabsTrigger>
-          </TabsList>
 
-          <TabsContent value="info">
-            <TabInfo produto={produto} />
-          </TabsContent>
+      {/* Cards de métricas */}
+      <TabInfo movimentacoes={movimentacoes} produto={produto} />
 
-          <TabsContent value="movimentacoes">
-            <TabMovimentacoes movimentacoes={movimentacoes} produto={produto} />
-          </TabsContent>
-        </Tabs>
-        <ModalProduto
-          key={modoEdicao?.id ?? "novo"}
-          aberto={aberto}
-          onFechar={() => setAberto(false)}
-          modoEdicao={modoEdicao}
-          onSalvar={handleSalvar}
-        />
-      </div>
+      {/* Tabela de movimentações */}
+      <TabMovimentacoes movimentacoes={movimentacoes} produto={produto} />
+
+      <ModalProduto
+        key={modoEdicao?.id ?? "novo"}
+        aberto={aberto}
+        onFechar={() => setAberto(false)}
+        modoEdicao={modoEdicao}
+        onSalvar={handleSalvar}
+      />
     </div>
   );
 }
