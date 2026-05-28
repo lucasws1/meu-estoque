@@ -71,8 +71,9 @@ export default function StepQuantidade({
             className="bg-muted border-border size-10 rounded-full border"
             onClick={() =>
               (valores.quantidade || 0) + 1 <=
-                (produtoSelecionado?.quantidade_estoque || 0) &&
-              onChange("quantidade", (valores.quantidade || 0) + 1)
+                (valores.tipo === "saida"
+                  ? produtoSelecionado?.quantidade_estoque
+                  : 99) && onChange("quantidade", (valores.quantidade || 0) + 1)
             }
           />
         </div>

@@ -25,6 +25,7 @@ import { listarProdutos } from "@/services/produtos";
 import { format } from "date-fns";
 import {
   CalendarIcon,
+  ExternalLink,
   Eye,
   Loader2,
   Pencil,
@@ -116,10 +117,6 @@ export default function Movimentacoes() {
     }
   };
 
-  const visualizarMovimentacao = (id) => {
-    navigate(`/movimentacoes/${id}`);
-  };
-
   return (
     <div className="mx-auto flex w-[90%] flex-col gap-6 xl:w-full xl:max-w-7xl">
       <div className="flex w-full flex-col justify-between gap-6 xl:flex-row">
@@ -179,7 +176,7 @@ export default function Movimentacoes() {
             </div>
 
             <div className="flex flex-col items-center gap-2 lg:flex-row">
-              <Field className="mx-auto w-42">
+              <Field className="mx-auto w-42 truncate">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -281,8 +278,12 @@ export default function Movimentacoes() {
                 <tr key={mov.id} className="border-t">
                   <td className="px-4 py-3">{mov.id}</td>
                   <td className="cursor-pointer px-4 py-3">
-                    <Link to={`/produtos/${mov.produto_id}`}>
-                      {mov.nome_produto}
+                    <Link
+                      to={`/produtos/${mov.produto_id}`}
+                      className="flex items-center gap-3"
+                    >
+                      {mov.nome_produto}{" "}
+                      <ExternalLink className="size-3 text-gray-400" />
                     </Link>
                   </td>
                   <td className="px-4 py-3">
@@ -300,13 +301,6 @@ export default function Movimentacoes() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => visualizarMovimentacao(mov.id)}
-                      >
-                        <Eye className="size-4" />
-                      </Button>
                       <Button
                         variant="ghost"
                         size="sm"
